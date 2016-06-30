@@ -54,11 +54,35 @@ void Main()
 	// 壁と道の色
 	const Color colWall = { 0, 0, 0 }, colFloor = { 192, 192, 192 };
 
+	// プレイヤーの位置
+	Point me = { 1, 1 };
+
+	// プレイヤーの色
+	const Color colMe = { 255, 0, 0 };
+
+	// プレイヤーの見た目の半径
+	const int meRadius = std::min(cw, ch) / 2 - 1;
+
+	// キー設定
+	const auto keyR = Input::KeyRight | Input::KeyD;
+	const auto keyU = Input::KeyUp | Input::KeyW;
+	const auto keyL = Input::KeyLeft | Input::KeyA;
+	const auto keyD = Input::KeyDown | Input::KeyS;
+
 	while (System::Update())
 	{
+		// プレイヤーの操作
+		if (keyR.clicked && !maze[me.x + 1][me.y]) ++me.x;
+		if (keyU.clicked && !maze[me.x][me.y - 1]) --me.y;
+		if (keyL.clicked && !maze[me.x - 1][me.y]) --me.x;
+		if (keyD.clicked && !maze[me.x][me.y + 1]) ++me.y;
+
 		// 迷路を描画
 		for (int y = 0; y < h; ++y) for (int x = 0; x < w; ++x) {
 			Rect(x * cw, y * ch, cw, ch).draw(maze[x][y] ? colWall : colFloor);
 		}
+
+		// プレイヤーを描画
+		Circle({ me.x * cw + cw / 2, me.y * ch + ch / 2 }, meRadius).draw(colMe);
 	}
 }
