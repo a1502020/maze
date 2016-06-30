@@ -11,9 +11,42 @@ void Main()
 	// 迷路 (true: 壁, false: 道)
 	std::vector<std::vector<bool>> maze(w, std::vector<bool>(h, false));
 
-	// 表示確認用にいくつか壁にする
-	maze[0][0] = true;
-	maze[w - 1][h - 1] = true;
+	// ------------------------------
+	// 棒倒し法で迷路を生成する
+	// ------------------------------
+
+	// 周囲を壁にする
+	for (int x = 0; x < w; ++x) {
+		maze[x][0] = true;
+		maze[x][h - 1] = true;
+	}
+	for (int y = 0; y < h; ++y) {
+		maze[0][y] = true;
+		maze[w - 1][y] = true;
+	}
+
+	// 棒倒し
+	for (int y = 2; y <= h - 3; y += 2) for (int x = 2; x <= w - 3; x += 2) {
+
+		// 上下左右のうち、候補になるマスのリストを作る
+		std::vector<Point> points;
+		if (!maze[x + 1][y]) points.push_back({ x + 1, y });
+		if (!maze[x - 1][y]) points.push_back({ x - 1, y });
+		if (!maze[x][y + 1]) points.push_back({ x, y + 1 });
+		if (y == 2) points.push_back({ x, y - 1 });
+
+		// 候補から1つランダムに選ぶ
+		Point p = points[Random(0, static_cast<int>(points.size() - 1))];
+
+		// マス (x, y) と選んだマスを壁にする
+		maze[x][y] = true;
+		maze[p.x][p.y] = true;
+
+	}
+
+	// ------------------------------
+	// 棒倒し法ここまで
+	// ------------------------------
 
 	// 迷路の1マスを描画する大きさ
 	const int cw = 15, ch = 15;
